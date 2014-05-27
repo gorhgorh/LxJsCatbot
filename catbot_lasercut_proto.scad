@@ -134,21 +134,25 @@ module servoConnectorGear(innerRadius) {
  * constructed parts layed on top view
  */ 
 
-module _topBracketUp() {
+module _topBracketUp(withServoHole) {
     // left part (servo side)
     translate([0,0,-matTh/2])difference(){
         // main plate
         translate([20-circlarHornDiam/2 ,0,0])
             borderRadiusbox([40,20,matTh], 5,[1,1,0,0]);    
         // hole for _servoCircHorn
-        translate([0,0,-matTh/2])
-            cylinder(h=matTh+4, r=circlarHornDiam/2+.2, center=false, $fn=circleFn);
+        if(withServoHole){
+            translate([0,0,-matTh/2])
+                cylinder(h=matTh+4, r=circlarHornDiam/2+.2, center=false, $fn=circleFn);
+        }
         // hole for _LazerHolder
-        translate([20,0,2])
+        translate([26,0,2])
             cube(size=[matTh,matTh,matTh+4], center=true);
         
     }
 }
+
+
 
 // servo dummy 
 module servo() {
@@ -170,11 +174,15 @@ module servo() {
  * constructed parts placed to test the model
  */
 
-// offset and center the servo dummy
-//translate([11.5,6.3,1]) rotate([0,0,180]) servo();
+// offset and center the servo  dummy Y
+translate([6.3,-6.3,29]) rotate([0,180,0]) servo();
 
+// top left
+_topBracketUp(true);
 
-_topBracketUp();
+// top right
+translate([0,0,40]) _topBracketUp();
+
 
 servoCircHorn(circlarHornDiam/2,2.5);
 
