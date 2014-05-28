@@ -14,13 +14,20 @@ matTh                   = 3;            // material thickness, int
 circlarHornDiam         = 20;
 circleFn                = 80;
 
-brktW                   = 40;
-brktH                   = 20;
+brktW                   = 40;           // top bracket width
+brktH                   = 20;           // top bracket height
+
+srvHldTW                = 50;           // servo holder top width
+srvHldTH                = 20;           // servo holder top width
+servoHoleDiam           = 1;            // servo mounting hole diameter
 
 gearInitSize            = 2.5;          // TO DO : CLEANUP 
 gearDist                = 21;           // TO DO : CLEANUP
 
 lzrHoleRadius           = 10.4;
+
+toothGap                = 0.1;
+
 /*
  * ELEMENTS 
  */
@@ -34,7 +41,7 @@ lzrHoleRadius           = 10.4;
  *
  * PARAMS       :
  * diam         : outer gear Diameter 
- * innerRadius  : gear diameter (usuasly a bit smaller than the servo geared axis)
+ * innerRadius  : gear diameter (usually a bit smaller than the servo geared axis)
  */ 
 
 module servoCircHorn(diam,innerRadius,gearHeight) {
@@ -49,7 +56,7 @@ module servoCircHorn(diam,innerRadius,gearHeight) {
 /*
  * BORDER  RADIUS BOX MODULE  
  *
- * place circles in the corners with the given radius at choosen corners  
+ * place circles in the corners with the given radius at chosen corners  
  *
  * PARAMS  :
  * size    : module size [X,Y,Z],  array
@@ -121,15 +128,14 @@ module servoConnectorGear(innerRadius,height) {
     
     innerteeth=12;
     innerpitch = innerRadius/innerteeth*360;
-
-        
-            gear (number_of_teeth=innerteeth,
-                pressure_angle=45,
-                circular_pitch=innerpitch,
-           gear_thickness = height+1,
+    gear (
+            number_of_teeth=innerteeth,
+            pressure_angle=45,
+            circular_pitch=innerpitch,
+            gear_thickness = height+1,
             rim_thickness = height+1,
             hub_thickness = height+1,
-                bore_diameter = 0);
+            bore_diameter = 0);
     
 }
 
@@ -155,7 +161,7 @@ module servoConnectorGear(innerRadius,height) {
 //cToothMod([matTh,matTh,matTh],0.1,1);
 /*
  * PARTS 
- * constructed parts layed on top view
+ * constructed parts laid on top view
  */ 
 
 
@@ -177,7 +183,7 @@ module _topBracketUp(withServoHole,gearHole) {
         }
         // hole for _LazerHolder
         translate([26,0,2])
-            cube(size=[matTh,matTh,matTh+4], center=true);
+            cube(size=[matTh-0.1,matTh-0.1,matTh+4], center=true);
         
     }
 }
@@ -193,7 +199,7 @@ module _topBracketMiddle(){
         translate([0,brktH/2-(matTh/2),0]){cToothMod([matTh,matTh,matTh],0.1,3);};
 }
 
-// _topBracketMiddle();
+
 
 module _laserHolder(innerDiam,circleDiam) {
     difference(){
@@ -202,10 +208,22 @@ module _laserHolder(innerDiam,circleDiam) {
     }
 }
 
-//_laserHolder(2);
 
-//overview();
-// servo dummy 
+module _servoHolder(){
+    difference(){
+        translate([-14.2,0,0]) cube([50,20,matTh], center=true);
+        translate([-17.2,-6.3,-3]) cube([23.5,12.6,10.4]);
+        translate ([8.6,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
+        translate ([-19.8,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
+    }
+    translate([brktW,brktH/2+(matTh/2),0]){cToothMod([matTh,matTh,matTh],0.1,1);};
+    translate([0,brktH/2-(matTh/2),0]){cToothMod([matTh,matTh,matTh],0.1,3);};     
+}
+
+//_servoHolder();
+//translate([6.3,-6.3,29]) rotate([0,180,0]) servoo();
+
+// servo dummys 
 module servo() {
     color("LightBlue", 0.5) {
         cube([23.5,12.6,16.4]);
@@ -220,13 +238,30 @@ module servo() {
     }
 }
 
+
+module servoo() {
+    color("LightBlue", 0.5) {
+        cube([23.5,12.6,16.4]);
+        translate([-4.65,0,16.3]) difference() {
+            cube([32.8,12.6,2]);
+            translate([2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
+            translate([32.8-2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
+        }
+        translate([0,0,18.2]) cube([23.5,12.6,4.4]);
+        translate([6.3,6.3,22.5]) cylinder(r=6.3,h=4.1,$fn=45);
+        translate([6.3,6.3,26.5]) cylinder(r=2.25,h=2.8,$fn=45);
+    }
+}
+
+
 /*
  * MODEL 
  * constructed parts placed to test the model
  */
 
-// overview of the module for display and tests
 
+
+// overview of the module for display and tests
 module overview(withServo) {
 
     /*
@@ -252,21 +287,27 @@ module overview(withServo) {
 
 }
 
-//overview(true);
+overview(true);
 
 /*
  * PROJECTIONS 
  * use them if you have time, the final render ... may kill your computer :(
  */ 
 
-projection(cut = true)
-// top bracket
-_topBracketUp(false,true);
-projection(cut = true) translate([-46,0,0]) _topBracketUp();
-projection(cut = true) translate ([-12.6,-2*brktH+6,0]) _topBracketMiddle();
-projection(cut = true) translate ([-25.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius-0.1,2);  
-projection(cut = true) translate ([-40.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius-0.1,2);    
-//servoCircHorn(circlarHornDiam/2,2.5);
+
+// top bracket 
+
+//projection(cut = true) _topBracketUp(false ,true);
+//projection(cut = true) translate([-46,0,0]) _topBracketUp();
+//projection(cut = true) translate ([-12.6,-2*brktH+6,0]) _topBracketMiddle();
+//projection(cut = true) translate ([-25.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius,2);  
+//projection(cut = true) translate ([-40.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius,2);    
+
+/*
+ * Junk 
+ * alway nice to have some junk part around 
+ */
+
 
 /*
 // array of gears for testing
