@@ -229,7 +229,7 @@ module _servoHolder(){
 
 module _servoHolderClip() {
     fullw=servoPlankTh+matTh*4;
-    fullh=12;
+    fullh=9;
     gap=0.2;
     linear_extrude(height=matTh)
     polygon(points=[[0,0],[fullw,0],
@@ -302,7 +302,7 @@ module overview(withServo) {
     translate([0,0,9.2+servoPlankTh+matTh]) _servoHolder();
 
     // servo clips
-    translate([-31.5,-10-matTh,19.2]) rotate([0,90,0]) _servoHolderClip();
+    translate([-31.5,-10,19.2]) rotate([0,90,0]) _servoHolderClip();
 
 }
 
