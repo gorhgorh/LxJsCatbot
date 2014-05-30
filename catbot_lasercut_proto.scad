@@ -28,6 +28,8 @@ lzrHoleRadius           = 10.4;
 
 toothGap                = 0.1;
 
+servoPlankTh            = 2.25;
+
 /*
  * ELEMENTS 
  */
@@ -215,6 +217,9 @@ module _servoHolder(){
         translate([-17.2,-6.3,-3]) cube([23.5,12.6,10.4]);
         translate ([-19.2,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
         translate ([8.3,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
+        translate ([-30,11-matTh/2,0]) cube(size=[matTh,matTh+2,20], center=true);
+        translate ([-30,-1*(11-matTh/2),0]) cube(size=[matTh,matTh+2,20], center=true);
+        
     }
 
     translate([-39.2,(-matTh/2)+4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};     
@@ -222,8 +227,24 @@ module _servoHolder(){
     
 }
 
-_servoHolder();
-translate([6.3,-6.3,29]) rotate([0,180,0]) servoo();
+module _servoHolderClip() {
+    fullw=servoPlankTh+matTh*4;
+    fullh=12;
+    gap=0.2;
+    linear_extrude(height=matTh)
+    polygon(points=[[0,0],[fullw,0],
+                    [fullw,fullh],[fullw-matTh,fullh],
+                    [fullw-matTh-gap,matTh],[fullw-matTh*2+gap,matTh],
+                    [fullw-matTh*2,fullh],[fullw-matTh*2,fullh],
+                    [fullw-matTh*2-servoPlankTh,fullh],[fullw-matTh*2-servoPlankTh,fullh],
+                    [fullw-matTh*2-servoPlankTh-gap,matTh],[fullw-matTh*3-servoPlankTh+gap,matTh],
+                    [fullw-matTh*3-servoPlankTh,fullw-matTh],[0,fullw-matTh]
+
+                    ], paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]);
+    
+}
+
+//_servoHolder();
 
 // servo dummys 
 module servo() {
@@ -239,22 +260,6 @@ module servo() {
         translate([6.3,6.3,26.5]) cylinder(r=2.25,h=2.8,$fn=45);
     }
 }
-
-
-module servoo() {
-    color("LightBlue", 0.5) {
-        cube([23.5,12.6,16.4]);
-        translate([-4.65,0,16.3]) difference() {
-            cube([32.8,12.6,2]);
-            translate([2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
-            translate([32.8-2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
-        }
-        translate([0,0,18.2]) cube([23.5,12.6,4.4]);
-        translate([6.3,6.3,22.5]) cylinder(r=6.3,h=4.1,$fn=45);
-        translate([6.3,6.3,26.5]) cylinder(r=2.25,h=2.8,$fn=45);
-    }
-}
-
 
 /*
  * MODEL 
@@ -285,11 +290,23 @@ module overview(withServo) {
     translate ([31-6.5,-brktH/2,40+(matTh/2)]) rotate([0,90,0]) _topBracketMiddle();
     
     // servo connector gear
-    //servoCircHorn(circlarHornDiam/2,2.5);    
+    //servoCircHorn(circlarHornDiam/2,2.5);
+
+    /*
+     * top servo holder
+     */
+    // bottom servo holder
+    translate([0,0,9.2]) _servoHolder();
+
+    // bottom servo holder
+    translate([0,0,9.2+servoPlankTh+matTh]) _servoHolder();
+
+    // servo clips
+    translate([-31.5,-10-matTh,19.2]) rotate([0,90,0]) _servoHolderClip();
 
 }
 
-//overview(true);
+ overview(true);
 
 /*
  * PROJECTIONS 
