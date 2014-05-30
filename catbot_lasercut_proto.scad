@@ -213,15 +213,17 @@ module _servoHolder(){
     difference(){
         translate([-14.2,0,0]) cube([50,20,matTh], center=true);
         translate([-17.2,-6.3,-3]) cube([23.5,12.6,10.4]);
-        translate ([8.6,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
-        translate ([-19.8,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
+        translate ([-19.2,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
+        translate ([8.3,0,0])cylinder(h=100, r=servoHoleDiam, center=true, $fn=circleFn);
     }
-    translate([brktW,brktH/2+(matTh/2),0]){cToothMod([matTh,matTh,matTh],0.1,1);};
-    translate([0,brktH/2-(matTh/2),0]){cToothMod([matTh,matTh,matTh],0.1,3);};     
+
+    translate([-39.2,(-matTh/2)+4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};     
+    translate([-39.2,(-matTh/2)-4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};     
+    
 }
 
-//_servoHolder();
-//translate([6.3,-6.3,29]) rotate([0,180,0]) servoo();
+_servoHolder();
+translate([6.3,-6.3,29]) rotate([0,180,0]) servoo();
 
 // servo dummys 
 module servo() {
@@ -287,7 +289,7 @@ module overview(withServo) {
 
 }
 
-overview(true);
+//overview(true);
 
 /*
  * PROJECTIONS 
