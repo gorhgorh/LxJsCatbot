@@ -1,6 +1,8 @@
 LxJsCatbot
 ==========
 
-this is the repository for the 2014 lxjs catbot, for the moment scad file and a DXF, but one day it will be ... ALIVE
+This is the repository for Catbot, LXJS 2014 edition !
+ 
+while made for LXJS nodebot's workshop you will find here everything to make your own. 
 
-V0 is meant to be lazer cutted and made out of mdf. and may not be production ready :)
+V0 is meant to be laser cut and made out of MDF. and may not be production ready :) you can find it in the CAD/models directory, enjoy !
