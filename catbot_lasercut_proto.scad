@@ -246,6 +246,21 @@ module _servoHolderClip() {
 
 //_servoHolder();
 
+module _bottomBracketTop(){
+    holeDiam = math-0.1;
+    difference(){
+    cube(size=[50+2*matTh,19+2*matTh,matTh], center=true);
+        translate([12.3,4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
+        translate([12.3,-4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
+        translate([12.3-matTh-servoPlankTh,4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
+        translate([12.3-matTh-servoPlankTh,-4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
+
+        translate([0,0,-matTh/2])
+                servoConnectorGear(2.5);
+    }
+}
+translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) 
+_bottomBracketTop();
 // servo dummys 
 module servo() {
     color("LightBlue", 0.5) {
