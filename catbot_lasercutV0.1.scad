@@ -231,7 +231,8 @@ module _servoHolderClip() {
     fullw=servoPlankTh+matTh*4;
     fullh=9;
     gap=0.2;
-    linear_extrude(height=matTh)
+    linear_extrude(height=matTh){
+
     polygon(points=[[0,0],[fullw,0],
                     [fullw,fullh],[fullw-matTh,fullh],
                     [fullw-matTh-gap,matTh],[fullw-matTh*2+gap,matTh],
@@ -241,13 +242,26 @@ module _servoHolderClip() {
                     [fullw-matTh*3-servoPlankTh,fullw-matTh],[0,fullw-matTh]
 
                     ], paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]);
+    }
     
+}
+
+module _servoHolderShape() {
+    polygon(points=[[0,0],[fullw,0],
+                    [fullw,fullh],[fullw-matTh,fullh],
+                    [fullw-matTh-gap,matTh],[fullw-matTh*2+gap,matTh],
+                    [fullw-matTh*2,fullh],[fullw-matTh*2,fullh],
+                    [fullw-matTh*2-servoPlankTh,fullh],[fullw-matTh*2-servoPlankTh,fullh],
+                    [fullw-matTh*2-servoPlankTh-gap,matTh],[fullw-matTh*3-servoPlankTh+gap,matTh],
+                    [fullw-matTh*3-servoPlankTh,fullw-matTh],[0,fullw-matTh]
+
+                    ], paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]);    
 }
 
 //_servoHolder();
 
-module _bottomBracketTop(){
-    holeDiam = math-0.1;
+module _bottomBracketTop(withServo){
+    holeDiam = matTh-0.1;
     difference(){
     cube(size=[50+2*matTh,19+2*matTh,matTh], center=true);
         translate([12.3,4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
@@ -258,9 +272,11 @@ module _bottomBracketTop(){
         translate([0,0,-matTh/2])
                 servoConnectorGear(2.5);
     }
+    if(withServo){
+        translate([-6.3,-6.3,-29]) rotate([0,0,0]) servo();
+    }
+
 }
-translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) 
-_bottomBracketTop();
 // servo dummys 
 module servo() {
     color("LightBlue", 0.5) {
@@ -281,21 +297,10 @@ module servo() {
  * constructed parts placed to test the model
  */
 
-
-
-// overview of the module for display and tests
-module overview(withServo) {
-
-    /*
-     * TOP BRACKET 
-     */
-
-    // offset and center the servo  dummy Y
-    if(withServo){
-        translate([6.3,-6.3,29]) rotate([0,180,0]) servo();
-    }
-
-    // top left
+/*
+ * TOP BRACKET 
+ */
+module topBracket() {
     _topBracketUp(false,true);
 
     // top right
@@ -303,13 +308,12 @@ module overview(withServo) {
 
     // top middle
     translate ([31-6.5,-brktH/2,40+(matTh/2)]) rotate([0,90,0]) _topBracketMiddle();
-    
-    // servo connector gear
-    //servoCircHorn(circlarHornDiam/2,2.5);
+}
 
-    /*
-     * top servo holder
-     */
+/*
+ * BOTTOM BRACKET 
+ */
+module bottomBracket(withServo) {
     // bottom servo holder
     translate([0,0,9.2]) _servoHolder();
 
@@ -319,9 +323,33 @@ module overview(withServo) {
     // servo clips
     translate([-31.5,-10,19.2]) rotate([0,90,0]) _servoHolderClip();
 
+    // bottomBracket
+    if(withServo){   
+        translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) _bottomBracketTop(true);
+    }else{
+        translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) _bottomBracketTop();
+        
+    }
 }
 
- overview(true);
+// overview of the module for display and tests
+module overview(withServo) {
+
+    // offset and center the servo  dummy Y
+    if(withServo){
+        translate([6.3,-6.3,29]) rotate([0,180,0]) servo();
+    }
+
+    rotate([0,0,80])topBracket();
+    if (withServo){
+        bottomBracket(true);
+    } else {
+        bottomBracket();
+    }
+    
+}
+
+// rotate([0,-90]) overview(true);
 
 /*
  * PROJECTIONS 
@@ -331,11 +359,16 @@ module overview(withServo) {
 
 // top bracket 
 
-//projection(cut = true) _topBracketUp(false ,true);
-//projection(cut = true) translate([-46,0,0]) _topBracketUp();
-//projection(cut = true) translate ([-12.6,-2*brktH+6,0]) _topBracketMiddle();
-//projection(cut = true) translate ([-25.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius,2);  
-//projection(cut = true) translate ([-40.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius,2);    
+projection(cut = true) _topBracketUp(false ,true);
+projection(cut = true) translate([-46,0,0]) _topBracketUp();
+projection(cut = true) translate ([-12.6,-2*brktH+6,0]) _topBracketMiddle();
+projection(cut = true) translate ([-25.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius,2);  
+projection(cut = true) translate ([-40.6,-2*brktH+16,0]) _laserHolder(lzrHoleRadius,2);
+projection(cut = true) translate ([-12.6,-3*brktH+12,0]) _servoHolder();
+projection(cut = true) translate ([-12.6,-4*brktH+10,0]) _servoHolder();
+projection(cut = true) translate([-75.5,-2,0]) _servoHolderClip();
+projection(cut = true) translate([-75.5,-15,0]) _servoHolderClip();
+projection(cut = true) translate ([15.6,-4*brktH+12,0])  rotate(90) _bottomBracketTop();
 
 /*
  * Junk 
