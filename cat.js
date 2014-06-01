@@ -1,16 +1,21 @@
 /* Simple test initiate a catbot with repl, injected objects are : laser, onlineLed, servoX, servoY */
 
 var catbot    	= require('catbot'),
-	temporal		= require('temporal');
+	temporal		= require('temporal'),
+	reset;
 
 catbot(function (err,hard) {
 	if (!hard) {
       throw new Error('did you turn it on and off ?');
     }
-
-    // all centered 
-    hard.x.center();
-    hard.y.center();
+    reset=function(){
+			hard.x.stop();
+			hard.y.stop();
+			hard.x.center();
+			hard.y.center();
+		};
+    // all centered
+    reset();
 
     temporal.queue([
 		{
@@ -23,27 +28,24 @@ catbot(function (err,hard) {
 		{
 			delay: 6000,
 			task: function() {
-		  	hard.x.stop();
-    		hard.y.stop();
-		  	hard.x.center();
-    		hard.y.center();
-    		console.log('sweep done !');
+			  	reset();
+	    		console.log('sweep done !');
 			}
 		}
 	]);
 })
 
-//           \`*-.                    
-//            )  _`-.                 
-//           .  : `. .                
-//           : _   '  \               
-//           ; *` _.   `*-._          
-//           `-.-'          `-.       
-//             ;       `       `.     
-//             :.       .        \    
-//             . \  .   :   .-'   .   
-//             '  `+.;  ;  '      :   
-//             :  '  |    ;       ;-. 
+//           \`*-.
+//            )  _`-.
+//           .  : `. .
+//           : _   '  \
+//           ; *` _.   `*-._
+//           `-.-'          `-.
+//             ;       `       `.
+//             :.       .        \
+//             . \  .   :   .-'   .
+//             '  `+.;  ;  '      :
+//             :  '  |    ;       ;-.
 //             ; '   : :`-:     _.`* ;
-//          .*' /  .*' ; .*`- +'  `*' 
-// .        `*-*   `*-*  `*-*'  
+//          .*' /  .*' ; .*`- +'  `*'
+// .        `*-*   `*-*  `*-*'
