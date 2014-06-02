@@ -1,6 +1,6 @@
 /* Simple test to boot the catbot, center servos, pause, sweep, stops. */
 
-var catbot      = require('catbot'),
+var catbot      = require('catbot')({port: '/dev/cu.usbmodem1411'}),
     temporal    = require('temporal');
 
 catbot(function (err,hard) {
