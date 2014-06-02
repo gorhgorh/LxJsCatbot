@@ -1,10 +1,9 @@
 /* Simple test to boot the catbot, center servos, pause, sweep, stops. */
 
 var catbot      = require('catbot'),
-    temporal    = require('temporal'),
-    five        = require('johnny-five');
+    temporal    = require('temporal');
 
-catbot(new five.Board({port: '/dev/cu.usbmodem1411'}),function (err,hard) {
+catbot(function (err,hard) {
     if (!hard) {
       throw new Error('did you turn it on and off ?');
     }
