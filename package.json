@@ -23,6 +23,7 @@
   "homepage": "https://github.com/gorhgorh/LxJsCatbot",
   "dependencies": {
     "catbot": "0.0.1",
+    "johnny-five": "^0.7.47",
     "temporal": "^0.3.7"
   }
 }

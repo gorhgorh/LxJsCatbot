@@ -2,20 +2,13 @@
 
 var catbot      = require('catbot'),
     temporal    = require('temporal'),
-    reset;
+    five        = require('johnny-five');
 
-catbot(function (err,hard) {
+catbot(new five.Board({port: '/dev/cu.usbmodem1411'}),function (err,hard) {
     if (!hard) {
       throw new Error('did you turn it on and off ?');
     }
-    reset=function(){
-            hard.x.stop();
-            hard.y.stop();
-            hard.x.center();
-            hard.y.center();
-        };
-    // all centered
-    reset();
+    hard.rst();
 
     temporal.queue([
         {
@@ -42,7 +35,7 @@ catbot(function (err,hard) {
         {
             delay: 6000,
             task: function() {
-                reset();
+                hard.rst();
                 console.log('sweep done !, your cat remote is ready to go sir');
             }
         },
