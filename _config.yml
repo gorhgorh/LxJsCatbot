@@ -1,0 +1,11 @@
+# Site settings
+title: Catbot Factory
+email: gorhgorh@gmail.com
+description: "This is the place on the web where you'll begin your journey to remote control cats with and arduino and some javascript mojo"
+baseurl: "/LxJsCatbot"
+url: "http://nodebotparis.fr"
+
+
+# Build settings
+markdown: kramdown
+permalink: pretty
