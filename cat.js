@@ -3,6 +3,13 @@
 var catbot      = require('catbot'),
     temporal    = require('temporal');
 
+/**
+ * Let's instanciate our catbot !
+ * @param  {string} err  error message if any encountered
+ * @param  {object} hard th
+ * @return {functions} see catbot module info for available functions
+ */
+
 catbot(function (err,hard) {
     if (!hard) {
       throw new Error('did you turn it on and off ?');
@@ -15,10 +22,7 @@ catbot(function (err,hard) {
             task: function() {
                 hard.online.on();
                 hard.y.to(0);
-                 setTimeout(function  () {hard.laser.on();
-                     // body...
-                 }, 800);
-                //hard.laser.on();
+                setTimeout(function  () { hard.laser.on() }, 800);
                 console.log('now your laser should point down and light up, online led is on as well');
             }
         },
@@ -44,8 +48,7 @@ catbot(function (err,hard) {
                 process.exit();
             }
         }
-
-    ]);
+    ]); // end temporal loop
 });
 
 //           \`*-.

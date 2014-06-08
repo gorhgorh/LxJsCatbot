@@ -3,28 +3,30 @@
  */
 
 
+
 use <MCAD/involute_gears.scad>
-use <MCAD/shapes.scad>
 
 /*
- * Variables 
- */ 
+ * Variables
+ */
+
+
 
 // GLOBALS
 matTh                   = 3;            // material thickness, int
 
 
-brktW                   = 40;           // top bracket width, int 
+brktW                   = 40;           // top bracket width, int
 brktH                   = 20;           // top bracket height
 
-srvHldTW                = 50;           // servo holder top width, int 
-srvHldTH                = 20;           // servo holder top width, int 
+srvHldTW                = 50;           // servo holder top width, int
+srvHldTH                = 20;           // servo holder top width, int
 
 // servo spec
 servoHoleDiam           = 1;            // servo mounting hole diameter
-servoPlankTh            = 2.25;         // thickness of the servo mounting extruded part, int 
+servoPlankTh            = 2.25;         // thickness of the servo mounting extruded part, int
 
-// box 
+// box
 boxTopSize              = [110,110,matTh];
 
 // bottom bracket
@@ -34,51 +36,30 @@ bottomBrktHoldDist      = -16.5;
 boxServoOffset          = [-6.3,-6.3,-28];
 
 //lasers
-lzrHoleRadius           = 10.4;         // diameter of the laser, need tweaks, int 
+lzrHoleRadius           = 10.4;         // diameter of the laser, need tweaks, int
 
-// utils 
-toothGap                = 0.1;          // reduced with of hole to be glue less assembled set to 0 to glue / solder , int 
+// utils
+toothGap                = 0.1;          // reduced with of hole to be glue less assembled set to 0 to glue / solder , int
 circleFn                = 80;           // number of ark for a circle refine at will
 
 
 
 /*
- * ELEMENTS 
+ * ELEMENTS
  */
 
 /*
- * CIRCULAR SERVO HORN MODULE  
+ * BORDER  RADIUS BOX MODULE
  *
- * place circles in the corners, with the given radius, to have or not 
- * rounded corners and array is used for 0 no corner 1 for corners 
- * css style (top right, bottom right, bottom left, top left )
- *
- * PARAMS       :
- * diam         : outer gear Diameter 
- * innerRadius  : gear diameter (usually a bit smaller than the servo geared axis)
- */ 
-
-module servoCircHorn(diam,innerRadius,gearHeight) {
-    rotate([0,0,-4]) difference() {
-        cylinder(h=matTh, r=diam, center=true, $fn=circleFn);
-        translate([0,0,-1*matTh +1])
-            servoConnectorGear(innerRadius,matTh);
-    }
-}
-
-
-/*
- * BORDER  RADIUS BOX MODULE  
- *
- * place circles in the corners with the given radius at chosen corners  
+ * place circles in the corners with the given radius at chosen corners
  *
  * PARAMS  :
  * size    : module size [X,Y,Z],  array
  * radius  : the round corner radius, int
  * corners : 0 no corner 1 for corners (top right, bottom right, bottom left, top left ) , array
- * css style 
+ * css style
  *
- */ 
+ */
 
 module borderRadiusbox(size, radius,corners)
 {
@@ -88,7 +69,7 @@ module borderRadiusbox(size, radius,corners)
 
     linear_extrude(height=z)
     hull(){
-        
+
         // top left
         if(corners[3] == 1) {
             translate([(-x/2)+(radius/2), (y/2)-(radius/2), 0])
@@ -101,12 +82,12 @@ module borderRadiusbox(size, radius,corners)
         // top right
         if (corners[0] == 1 ){
             translate([(x/2)-(radius/2), (y/2)-(radius/2), 0])
-            circle(r=radius, $fn=circleFn);   
+            circle(r=radius, $fn=circleFn);
         } else {
             translate([(x/2), (y/2), 0])
             square(radius,true);
         }
-        
+
 
         // bottom right
         if(corners[1] == 1) {
@@ -116,7 +97,7 @@ module borderRadiusbox(size, radius,corners)
             translate([(x/2), (-y/2), 0])
             square(radius,true);
         }
-        // bottom left 
+        // bottom left
         if(corners[2] == 1) {
 
             translate([(-x/2)+(radius/2), (-y/2)+(radius/2), 0])
@@ -129,17 +110,17 @@ module borderRadiusbox(size, radius,corners)
 }
 
 /*
- * SERVO CONNECTOR GEAR  
+ * SERVO CONNECTOR GEAR
  *
- * extruded shaft to make the servo axis hole 
+ * extruded shaft to make the servo axis hole
  *
  * PARAMS  :
  * innerRadius    : inherited, int
  *
- */ 
+ */
 
 module servoConnectorGear(innerRadius,height) {
-    
+
     innerteeth=12;
     innerpitch = innerRadius/innerteeth*360;
     gear (
@@ -150,72 +131,93 @@ module servoConnectorGear(innerRadius,height) {
             rim_thickness = height+1,
             hub_thickness = height+1,
             bore_diameter = 0);
-    
+
 }
 
 /*
- * CONNECTOR TOOTH 
+ * CONNECTOR TOOTH
  *
- * extruded bewelled cube to connect two parts layed in top view. 
+ * extruded bewelled cube to connect two parts layed in top view.
  *
  * PARAMS :
  * size         : tooth size, array
  * bewelSize    : used if you cast it in mdf allow 2 part to be assembled glueless
  * orientation  : 0 N,1 E,2 S,3 W
- * 
- */ 
+ *
+ */
 
  module cToothMod(size,bewelSize,orientation) {
 
     /*translate([0,(matTh/2)]) */rotate (orientation* -90) linear_extrude(height = size[2]) polygon(points=[[0,0],[size[0],0],[(size[0]+bewelSize),size[1]],[(0-bewelSize),size[1]]], paths=[[0,1,2,3]]);
  }
 
+ /*
+ * TOOTH 2.0
+ * back from the future, in 3d (now 2 cubes hulled to avoid mixing 2D/ 3d in unions)
+ *
+ * PARAMS :
+ * s            : tooth size, array
+ * bs           : used if you cast it in mdf allow 2 part to be assembled glueless
+ * o            : 0 N,1 E,2 S,3 W
+ *
+ */
+
+module tooth2(s,bs,o) {
+    rotate (orientation* -90) difference(){
+        cube(size=[s], center=false);
+        //cube(size=[], center=false);
+    }
+}
+//tooth2([2*matTh,matTh,matTh],0.1,0);
+
 /*
  * SERVO EXTUDER
  *
- * shaped like a servo to have a simple extrusion 
+ * shaped like a servo to have a simple extrusion
  *
  * PARAMS :
  * size         : tooth size, array
- * 
- */ 
+ *
+ */
 
- module servoExtuder(noServo) {
+ module servoExtuder(noServo=false) {
 
-    translate(boxServoOffset) 
+    translate(boxServoOffset)
     color([0, 0, 200, .9]) union(){
-        // bottom 
+        // bottom
         if(!noServo){
             cube(size=[23.5,12.6,16.4], center=false);
             translate([-4.65,0,16.3]) cube(size=[32.8,12.6,4], center=false);
+            translate([0,0,3]) rotate([0,90,90]) cylinder(h=12.6, r=3, center=false, $fn=circleFn);
         }
-        translate([-38.35,0,19.3]) cube(size=[90,12.6,50], center=false);
+        translate([-38.35,0,19.3]) cube(size=[90,12.7,50], center=false);
     }
  }
 
+//servoExtuder();
+
 
 /*
- * PARTS 
+ * PARTS
  * constructed parts laid on top view
- */ 
-
+ */
 
 module _topBracketUp(gearHole) {
     // left part (servo side)
     translate([0,0,-matTh/2])difference(){
         // main plate
         translate([5 ,0,0])
-            borderRadiusbox([brktW,brktH,matTh], 5,[1,1,1,1]);    
+            borderRadiusbox([brktW,brktH,matTh], 5,[1,1,1,1]);
             //translate([26,0,2]) cube(size=[matTh*2-0.1,matTh*-0.1,matTh+4], center=true);
         // hole for _servoCircHorn
 
-        if(gearHole){   
+        if(gearHole){
             translate([0,0,-matTh/2])
                 servoConnectorGear(2.5);
         }
         // hole for _LazerHolder
         translate([27,0,0])cube(size=[matTh-0.1,(matTh*2)-0.1,10], center=true);
-        
+
     }
 }
 
@@ -224,7 +226,7 @@ module _topBracketUp2(gearHole) {
     translate([0,0,-matTh/2])difference(){
         // main plate
         translate([5 ,0,0])
-            borderRadiusbox([brktW,brktH,matTh], 5,[1,1,1,1]);    
+            borderRadiusbox([brktW,brktH,matTh], 5,[1,1,1,1]);
             //translate([26,0,2]) cube(size=[matTh*2-0.1,matTh*-0.1,matTh+4], center=true);
         // hole for _servoCircHorn
 
@@ -241,25 +243,30 @@ module _topBracketUp2(gearHole) {
 
         // hole for _LazerHolder
         //translate([27,0,0])cube(size=[matTh-0.1,(matTh*2)-0.1,10], center=true);
-        
+
     }
 }
 
 
 
-module _LazerHolder2(w,h,r) {
-    translate([0,-w/2,0])
-        difference() {
+
+module _LazerHolder2(w=10.6,h=6,rO=7,rI=5.1) {
+    translate([0,-w/2,0]){
+        difference(){
             union(){
                 cube(size=[matTh,w,h], center=false);
-                translate([0,w/2,h])rotate([0,90,0])tube(matTh, 5, 50);
+                rotate([0,90,0]) translate([-6,w/2,0]) cylinder(h=matTh, r=rO, center=false, $fn=20);
+
             }
-            translate([-4,w/2,h]) rotate([0,90,0]) cylinder(h=10, r=r, center=false, $fn=20);
+            rotate([0,90,0]) translate([-6,w/2,0-4]) cylinder(h=10, r=rI, center=false, $fn=20);
         }
-    translate([matTh,-matTh,0])rotate([0,270,0]){cToothMod([2*matTh,matTh,matTh],0.1,3);};     
+        // 2d part out of the union / diffence
+        translate([matTh,w/2-3,-matTh])rotate([0,0,0]){cToothMod([2*matTh,matTh,matTh],0.1,3);};
+    }
+
 }
 
-// hold the laser, front panel 
+// hold the laser, front panel
 module _topBracketMiddle(){
         difference(){
             cube(size=[brktW,brktH,matTh], center=false);
@@ -294,12 +301,12 @@ module _servoHolder(withServoCableHole){
         }
         translate ([-30,11-matTh/2,0]) cube(size=[matTh,matTh+2,20], center=true);
         translate ([-30,-1*(11-matTh/2),0]) cube(size=[matTh,matTh+2,20], center=true);
-        
+
     }
 
-    translate([-39.2,(-matTh/2)+4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};     
-    translate([-39.2,(-matTh/2)-4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};     
-    
+    translate([-39.2,(-matTh/2)+4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};
+    translate([-39.2,(-matTh/2)-4,-(matTh/2)]){cToothMod([matTh,matTh,matTh],0.1,3);};
+
 }
 
 // clips the sevo holders
@@ -319,7 +326,7 @@ module _servoHolderClip() {
 
                     ], paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]);
     }
-    
+
 }
 
 
@@ -327,11 +334,11 @@ module _servoHolderClip() {
 module _bottomBracketTop(withServo){
     holeDiam = matTh-0.1;
     difference(){
-        
+
         cylinder(h=matTh, r=39, center=true, $fn=circleFn);     // base cylinder
         translate([0,0,-matTh/2]) servoConnectorGear(2.5);      // servo hole
-        translate([bottomBrktHoldDist,0,0])                                   // < offset for the 
-            union(){                                            // top bracket holes 
+        translate([bottomBrktHoldDist,0,0])                                   // < offset for the
+            union(){                                            // top bracket holes
                 translate([0,4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
                 translate([0,-4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
                 translate([0-matTh-servoPlankTh,4,0]) cube(size=[holeDiam , holeDiam , 40], center=true);
@@ -342,6 +349,29 @@ module _bottomBracketTop(withServo){
         translate([-6.3,-6.3,-29]) rotate([0,0,0]) servo();
     }
 
+}
+
+/*
+ * BOTTOM BRACKET
+ */
+module bottomBracket(withServo) {
+    translate([0,0,21.5-bottomBrktHoldDist]) union(){
+        // upper servo holder
+        translate([0,0,0]) _servoHolder(true);
+        // lower servo holder
+        translate([0,0,servoPlankTh+matTh]) _servoHolder();
+    }
+
+    // servo clips
+    translate([-31.5,-10,-bottomBrktHoldDist+31])  rotate([0,90,0]) _servoHolderClip();
+
+    // bottomBracket
+    if(withServo){
+        translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) _bottomBracketTop();
+    }else{
+        translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) _bottomBracketTop(true);
+
+    }
 }
 
 // provide holes for the svg box
@@ -357,17 +387,17 @@ module _fakeTopBox() {
             mirror([1]) translate([(boxTopSize[0]/2-matTh*3),-(matTh-toothGap)/2,-10]) cube([matTh*2-toothGap,matTh-toothGap,20]);
             mirror([1]) translate([(boxTopSize[0]/2-matTh*3),-((matTh-toothGap)/2+8),-10]) cube([matTh*2-toothGap,matTh-toothGap,20]);
             mirror([1]) translate([(boxTopSize[0]/2-matTh*3),-((matTh-toothGap)/2-8),-10]) cube([matTh*2-toothGap,matTh-toothGap,20]);
-                
-             
-        }   
+
+
+        }
     }
 }
 
-// servo dummys 
+// servo dummys
 module servo() {
     color("LightBlue", 0.5) {
         cube([23.5,12.6,16.4]);
-        translate([-4.65,0,16.3]) 
+        translate([-4.65,0,16.3])
         difference() {
             cube([32.8,12.6,2]);
             translate([2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
@@ -381,84 +411,89 @@ module servo() {
 
 
 /* bottom servo holder
- * 
  *
- * fix the bottom servo to the box 
+ *
+ * fix the bottom servo to the box
  *
  * PARAMS :
  * height       : height of the vbox, int
  * depth        : depth of the holder bit, int
- * noServo      : with extruded servo, bool 
- * 
- */ 
+ * noServo      : with extruded servo, bool
+ *
+ */
 
-// bottom servo holder
-
-module _bottomServoHolder(height,depth,noServo) {
+module _bottomServoHolder(h,d,noServo) {
     difference(){
-        translate([-height/2+matTh,-matTh/2,-depth- matTh/2]) cube(size=[height-(matTh*2),matTh,depth], center=false);
-        translate([-44,0,-(depth/2)-depth+14]) cube(size=[60,20,40], center=true);
-        translate([54,0,-(depth/2)-depth+14]) cube(size=[60,20,40], center=true);
-        translate([0,0,-depth+33])servoExtuder(noServo);
-        translate([36,0,-(depth/2)-depth+16]) cube(size=[matTh-0.1,20,40], center=true);
-        translate([-33,0,-(depth/2)-depth+16]) cube(size=[matTh-0.1,20,40], center=true);
+        // base cube
+        translate([-h/2+matTh,-matTh/2,-d- matTh/2])
+            cube(size=[h-(matTh*2),matTh,d], center=false);
+        // back extrution
+        translate([-44,0,-(d/2)-d+14]) cube(size=[60,20,40], center=true);
+        // top extruder
+        translate([0,0,-d+33])servoExtuder(noServo);
+        // front gap hole
+        translate([36,0,-(d/2)-d+50]) cube(size=[matTh-0.1,20,40], center=true);
+        // back gap hole
+        translate([-33,0,-(d/2)-d+18]) cube(size=[matTh-0.1,20,40], center=true);
     }
-        translate([(height/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
-        mirror([1,0,0]) translate([(height/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
-        //translate([0,0,0])servoExtuder(noServo);
+        translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
+        mirror([1,0,0]) translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
+
 
 }
 
 /*
- * MODEL 
+ * bottomServoHolderClip
+ * hold the 3 box servo holder, gap are centered
+ *
+ * PARAMS :
+ * w            : width of the holder, int
+ * h            : height, int
+ * gC           : Gap Count, number of gaps, int
+ * gW           : gap width, int
+ * gS           : gap Spacing distance between gap CENTERS, int
+ * gH           : gap height, distance between the begining of the
+ *                gap to the outer edge,int
+ *
+ */
+
+module bottomServoHolderClip(w=20,gC=3,gW=2.9,gS=7.9,gH=6) {
+    //w=gC*gS+matTh*2;
+
+    h= (gC*gS)+matTh;
+    difference(){
+        cube(size=[w,h,matTh], center=false);
+        for ( i = [0 : gC-1] )
+        {
+            translate([w/2+gH,gS*(i)+1.8*matTh,matTh/2]) cube(size=[w,gW,2*matTh], center=true);
+
+        }
+    }
+}
+
+/*
+ * MODEL
  * constructed parts placed to test the model
  */
 
 /*
- * TOP BRACKET 
+ * TOP BRACKET
  */
 
 module topBracketV2() {
 
-    // top left 
+    // top left
     _topBracketUp2(true); // left part with hole for the Y servo
-        translate([7-matTh/2,0,matTh/2+4]) 
+        translate([7-matTh/2,0,matTh/2+4])
      translate([0,0,-7.0]) mirror([0,0,1]) union(){
-        _LazerHolder2(10,6,4);
-        translate([6,0,0]) _LazerHolder2(10,6,4);
+        translate([0,0,0]) rotate([0,0,0])_LazerHolder2(10,6,7,5);
+        //_LazerHolder2(10,6,4);
+        //translate([6,0,0]) _LazerHolder2(10,6,4);
     }
-    
+
 }
 
 /*
- * BOTTOM BRACKET 
- */
-module bottomBracket(withServo) {
-    
-
-    translate([0,0,21.5-bottomBrktHoldDist]) union(){
-        // upper servo holder
-        translate([0,0,0]) _servoHolder(true);
-        // lower servo holder
-        translate([0,0,servoPlankTh+matTh]) _servoHolder();
-    }
-
-
-    // servo clips
-    translate([-31.5,-10,-bottomBrktHoldDist+31])  rotate([0,90,0]) _servoHolderClip();
-
-    // bottomBracket
-    if(withServo){   
-        translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) _bottomBracketTop();
-    }else{
-        translate([-40,0,(brktW+matTh)/2]) rotate([0,90,0]) _bottomBracketTop(true);
-        
-    }
-}
-
-
-
-/* 
  * arduinoboxTop
  */
 
@@ -472,15 +507,15 @@ module arduinoboxTop(withServo) {
     _bottomServoHolder(110,33);
     translate([0,8,0]) _bottomServoHolder(110,33,true);
     translate([0,-8,0]) _bottomServoHolder(110,33,true);
-    
 }
+
 //arduinoboxTop(true);
 // overview of the module for display and tests
 module overview(withServo) {
 
     // offset and center the servo  dummy Y
     translate([0,00,12.4+-bottomBrktHoldDist]) union(){
- 
+
 
         if(withServo){
             translate([6.3,-6.3,29]) rotate([0,180,0]) servo();
@@ -492,37 +527,63 @@ module overview(withServo) {
     } else {
         bottomBracket();
     }
-    
+
 }
-translate([0,0,-18])
-//cylinder(h=100, r=5, center=true, $fn=40);
 
-arduinoboxTop(true);
-translate([21.5,0,41]) rotate([0,-90]) overview(true);
+//translate([0,0,-18]) arduinoboxTop(true);
+//translate([21.5,0,41]) rotate([0,-90]) overview(true);
 
 /*
- * PROJECTIONS 
+ * PROJECTIONS
  * use them if you have time, the final render ... may kill your computer :(
- */ 
+ */
+
+module proj() {
+
+translate([-47,50,0]) _topBracketUp2(true);
+translate ([-25.6,-2*brktH+16,1]) rotate([0,90,0]) _LazerHolder2();
+translate ([-6.6,-2*brktH+16,1]) rotate([0,90,0]) _LazerHolder2();
+translate ([-12.6,-3*brktH+12,0]) _servoHolder(true);
+translate ([-12.6,-4*brktH+10,0]) _servoHolder();
+translate([-75.5,-2,0]) _servoHolderClip(true);
+translate([-75.5,-15,0]) _servoHolderClip();
+translate ([60.6,-4*brktH+12,0])  rotate(90) _bottomBracketTop();
+
+translate ([160.6,-4*brktH+12,0]) _fakeTopBox();
+
+translate ([160.6,20,0]) rotate([90,0,0]) _bottomServoHolder(110,33);
+translate ([160.6,70,0]) rotate([90,0,0]) _bottomServoHolder(110,33,true);
+translate ([160.6,120,0]) rotate([90,0,0]) _bottomServoHolder(110,33,true);
+
+translate ([25.6,60,0])bottomServoHolderClip();
+translate ([50.6,60,0])bottomServoHolderClip();
+}
+
+//projection(cut=false)
+proj();
+
+module arduinoboxTop(withServo) {
+    if (withServo){
+        translate(boxServoOffset) rotate([0,0,0]) servo();
+    }
+    // fake top box
+     _fakeTopBox();
+
+    _bottomServoHolder(110,33);
+    translate([0,8,0]) _bottomServoHolder(110,33,true);
+    translate([0,-8,0]) _bottomServoHolder(110,33,true);
+
+}
+
+
+
+
+
+
+
 /*
-
-
-projection(cut = true) _topBracketUp(false ,true);
-projection(cut = true) translate([-46,0,0]) _topBracketUp();
-projection(cut = true) translate ([-12.6,-2*brktH+6,0]) _topBracketMiddle();
-projection(cut = true) translate ([-25.6,-2*brktH+16,0]) _laserHolderClip(lzrHoleRadius,2);  
-projection(cut = true) translate ([-40.6,-2*brktH+16,0]) _laserHolderClip(lzrHoleRadius,2);
-projection(cut = true) translate ([-12.6,-3*brktH+12,0]) _servoHolder(true);
-projection(cut = true) translate ([-12.6,-4*brktH+10,0]) _servoHolder();
-projection(cut = true) translate([-75.5,-2,0]) _servoHolderClip(true);
-projection(cut = true) translate([-75.5,-15,0]) _servoHolderClip();
-projection(cut = true) translate ([15.6,-4*brktH+12,0])  rotate(90) _bottomBracketTop();
-
-*/
-
-/*
- * Junk 
- * alway nice to have some junk part around 
+ * Junk
+ * alway nice to have some junk part around
  */
 
 
@@ -534,7 +595,27 @@ for ( i = [0 : 10] )
 
         projection(cut = true) servoCircHorn(10,gearInitSize - 0.1*i);
     }
-    
+
 
 }
 */
+
+/*
+ * CIRCULAR SERVO HORN MODULE
+ *
+ * place circles in the corners, with the given radius, to have or not
+ * rounded corners and array is used for 0 no corner 1 for corners
+ * css style (top right, bottom right, bottom left, top left )
+ *
+ * PARAMS       :
+ * diam         : outer gear Diameter
+ * innerRadius  : gear diameter (usually a bit smaller than the servo geared axis)
+ */
+
+module servoCircHorn(diam,innerRadius,gearHeight) {
+    rotate([0,0,-4]) difference() {
+        cylinder(h=matTh, r=diam, center=true, $fn=circleFn);
+        translate([0,0,-1*matTh +1])
+            servoConnectorGear(innerRadius,matTh);
+    }
+}
