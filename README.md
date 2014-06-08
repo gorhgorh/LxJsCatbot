@@ -1,0 +1,1 @@
+run server localy : ```rm -rf _site/ && bundle exec jekyll serve --baseurl '' -w```
