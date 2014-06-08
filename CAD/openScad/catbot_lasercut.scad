@@ -419,7 +419,7 @@ module _bottomServoHolder(h,d,noServo) {
         // front gap hole
         translate([28,0,-(d/2)-d+50]) cube(size=[matTh-0.1,20,40], center=true);
         // back gap hole
-        translate([-33,0,-(d/2)-d+12]) cube(size=[matTh-0.1,20,40], center=true);
+        translate([-33,0,-(d/2)-d+8]) cube(size=[matTh-0.1,20,40], center=true);
     }
         translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
         mirror([1,0,0]) translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
@@ -523,8 +523,8 @@ module arduinoboxTop(withServo=true) {
 
 }
 
-translate([0,0,-18]) arduinoboxTop();
-translate([21.5,0,41]) rotate([0,-90]) overview();
+//translate([0,0,-18]) arduinoboxTop();
+//translate([21.5,0,41]) rotate([0,-90]) overview();
 
 /*
  * PROJECTIONS
@@ -532,30 +532,31 @@ translate([21.5,0,41]) rotate([0,-90]) overview();
  */
 
 module proj() {
+    translate([-47,50,0]) _topBracketUp2(true);
+    translate ([-25.6,-2*brktH+16,1]) rotate([0,90,0]) _LazerHolder2();
+    translate ([-6.6,-2*brktH+16,1]) rotate([0,90,0]) _LazerHolder2();
+    translate ([-12.6,-3*brktH+12,0]) _servoHolder(true);
+    translate ([-12.6,-4*brktH+10,0]) _servoHolder();
+    translate([-75.5,-2,0]) _servoHolderClip(true);
+    translate([-75.5,-15,0]) _servoHolderClip();
+    translate ([160.6,-4*brktH+12,0]) _fakeTopBox();
+    translate ([60.6,-4*brktH+12,0]) rotate(90)
+        _bottomBracketTop();
+    translate ([160.6,20,0]) rotate([90,0,0])
+        _bottomServoHolder(110,33);
+    translate ([160.6,70,0]) rotate([90,0,0])
+        _bottomServoHolder(110,33,true);
+    translate ([160.6,120,0]) rotate([90,0,0])
+        _bottomServoHolder(110,33,true);
 
-translate([-47,50,0]) _topBracketUp2(true);
-translate ([-25.6,-2*brktH+16,1]) rotate([0,90,0]) _LazerHolder2();
-translate ([-6.6,-2*brktH+16,1]) rotate([0,90,0]) _LazerHolder2();
-translate ([-12.6,-3*brktH+12,0]) _servoHolder(true);
-translate ([-12.6,-4*brktH+10,0]) _servoHolder();
-translate([-75.5,-2,0]) _servoHolderClip(true);
-translate([-75.5,-15,0]) _servoHolderClip();
+    for ( i = [0 : 5] ){
+        //r = 8-(i/10);
 
-translate ([160.6,-4*brktH+12,0]) _fakeTopBox();
+    translate ([i*-30,80,0])bottomServoHolderClip(20,3,2.9,8-i/10,6);
 
-translate ([60.6,-4*brktH+12,0]) rotate(90)
-    _bottomBracketTop();
-translate ([160.6,20,0]) rotate([90,0,0])
-    _bottomServoHolder(110,33);
-translate ([160.6,70,0]) rotate([90,0,0])
-    _bottomServoHolder(110,33,true);
-translate ([160.6,120,0]) rotate([90,0,0])
-    _bottomServoHolder(110,33,true);
-
-translate ([25.6,60,0])bottomServoHolderClip();
-translate ([50.6,60,0])bottomServoHolderClip();
+    }
 }
-
-//projection(cut=false)
-//proj();
+//module bottomServoHolderClip(w=20,gC=3,gW=2.9,gS=7.9,gH=6)
+projection(cut=false)
+proj();
 
