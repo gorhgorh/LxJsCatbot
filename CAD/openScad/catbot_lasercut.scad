@@ -411,13 +411,15 @@ module _bottomServoHolder(h,d,noServo) {
         translate([-h/2+matTh,-matTh/2,-d- matTh/2])
             cube(size=[h-(matTh*2),matTh,d], center=false);
         // back extrution
-        translate([-44,0,-(d/2)-d+14]) cube(size=[60,20,40], center=true);
+        translate([-72,0,-(d/2)-d+5]) cube(size=[60,20,40], center=true);
+        // back extrution
+        mirror(1)translate([-72,0,-(d/2)-d+5]) cube(size=[60,20,40], center=true);
         // top extruder
         translate([0,0,-d+33]) servoExtuder(noServo);
         // front gap hole
-        translate([36,0,-(d/2)-d+50]) cube(size=[matTh-0.1,20,40], center=true);
+        translate([28,0,-(d/2)-d+50]) cube(size=[matTh-0.1,20,40], center=true);
         // back gap hole
-        translate([-33,0,-(d/2)-d+18]) cube(size=[matTh-0.1,20,40], center=true);
+        translate([-33,0,-(d/2)-d+12]) cube(size=[matTh-0.1,20,40], center=true);
     }
         translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
         mirror([1,0,0]) translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
@@ -538,13 +540,17 @@ translate ([-12.6,-3*brktH+12,0]) _servoHolder(true);
 translate ([-12.6,-4*brktH+10,0]) _servoHolder();
 translate([-75.5,-2,0]) _servoHolderClip(true);
 translate([-75.5,-15,0]) _servoHolderClip();
-translate ([60.6,-4*brktH+12,0])  rotate(90) _bottomBracketTop();
 
 translate ([160.6,-4*brktH+12,0]) _fakeTopBox();
 
-translate ([160.6,20,0]) rotate([90,0,0]) _bottomServoHolder(110,33);
-translate ([160.6,70,0]) rotate([90,0,0]) _bottomServoHolder(110,33,true);
-translate ([160.6,120,0]) rotate([90,0,0]) _bottomServoHolder(110,33,true);
+translate ([60.6,-4*brktH+12,0]) rotate(90)
+    _bottomBracketTop();
+translate ([160.6,20,0]) rotate([90,0,0])
+    _bottomServoHolder(110,33);
+translate ([160.6,70,0]) rotate([90,0,0])
+    _bottomServoHolder(110,33,true);
+translate ([160.6,120,0]) rotate([90,0,0])
+    _bottomServoHolder(110,33,true);
 
 translate ([25.6,60,0])bottomServoHolderClip();
 translate ([50.6,60,0])bottomServoHolderClip();
@@ -553,49 +559,3 @@ translate ([50.6,60,0])bottomServoHolderClip();
 //projection(cut=false)
 //proj();
 
-
-
-
-
-
-
-
-
-/*
- * Junk
- * alway nice to have some junk part around
- */
-
-
-/*
-// array of gears for testing
-for ( i = [0 : 10] )
-{
-    translate([gearDist*i,0,0]){
-
-        projection(cut = true) servoCircHorn(10,gearInitSize - 0.1*i);
-    }
-
-
-}
-*/
-
-/*
- * CIRCULAR SERVO HORN MODULE
- *
- * place circles in the corners, with the given radius, to have or not
- * rounded corners and array is used for 0 no corner 1 for corners
- * css style (top right, bottom right, bottom left, top left )
- *
- * PARAMS       :
- * diam         : outer gear Diameter
- * innerRadius  : gear diameter (usually a bit smaller than the servo geared axis)
- */
-
-module servoCircHorn(diam,innerRadius,gearHeight) {
-    rotate([0,0,-4]) difference() {
-        cylinder(h=matTh, r=diam, center=true, $fn=circleFn);
-        translate([0,0,-1*matTh +1])
-            servoConnectorGear(innerRadius,matTh);
-    }
-}
