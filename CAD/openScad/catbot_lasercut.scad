@@ -42,8 +42,6 @@ lzrHoleRadius           = 10.4;         // diameter of the laser, need tweaks, i
 toothGap                = 0.1;          // reduced with of hole to be glue less assembled set to 0 to glue / solder , int
 circleFn                = 80;           // number of ark for a circle refine at will
 
-
-
 /*
  * ELEMENTS
  */
@@ -213,7 +211,7 @@ module _topBracketUp(gearHole=true) {
 
         // hole for _LazerHolder
         translate([27,0,0])
-            cube(size=[matTh-0.1,(matTh*2)-0.1,10], center=true);
+            cube(size=[matTh-toothGap,(matTh*2)-toothGap,10], center=true);
     }
 }
 
@@ -259,7 +257,7 @@ module _LazerHolder2(w=10.6,h=6,rO=7,rI=5.1) {
         // 2d part out of the union / difference
         translate([matTh,w/2-3,-matTh])
             rotate([0,0,0])
-                cToothMod([2*matTh,matTh,matTh],0.1,3);
+                cToothMod([2*matTh,matTh,matTh],toothGap,3);
     }
 
 }
@@ -286,9 +284,9 @@ module _servoHolder(withServoCableHole){
 
     //  connectors for assembly
     translate([-39.2,(-matTh/2)+4,-(matTh/2)])
-        cToothMod([matTh,matTh,matTh],0.1,3);
+        cToothMod([matTh,matTh,matTh],toothGap,3);
     translate([-39.2,(-matTh/2)-4,-(matTh/2)])
-        cToothMod([matTh,matTh,matTh],0.1,3);
+        cToothMod([matTh,matTh,matTh],toothGap,3);
 }
 
 // clips the sevo holders
@@ -314,7 +312,7 @@ module _servoHolderClip() {
 
 // x axis servo mount + Y axis holder
 module _bottomBracketTop(withServo){
-    holeDiam = matTh-0.1;
+    holeDiam = matTh-toothGap;
     difference(){
         cylinder(h=matTh, r=39, center=true, $fn=circleFn);     // base cylinder
         translate([0,0,-matTh/2]) servoConnectorGear(2.5);      // servo hole
@@ -383,8 +381,8 @@ module servo() {
         translate([-4.65,0,16.3])
         difference() {
             cube([32.8,12.6,2]);
-            translate([2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
-            translate([32.8-2.65,6.3,-0.1]) cylinder(r=1,h=3,$fn=45);
+            translate([2.65,6.3,-toothGap]) cylinder(r=1,h=3,$fn=45);
+            translate([32.8-2.65,6.3,-toothGap]) cylinder(r=1,h=3,$fn=45);
         }
         translate([0,0,18.2]) cube([23.5,12.6,4.4]);
         translate([6.3,6.3,22.5]) cylinder(r=6.3,h=4.1,$fn=45);
@@ -417,12 +415,12 @@ module _bottomServoHolder(h,d,noServo) {
         // top extruder
         translate([0,0,-d+33]) servoExtuder(noServo);
         // front gap hole
-        translate([28,0,-(d/2)-d+50]) cube(size=[matTh-0.1,20,40], center=true);
+        translate([28,0,-(d/2)-d+50]) cube(size=[matTh-toothGap,20,40], center=true);
         // back gap hole
-        translate([-33,0,-(d/2)-d+8]) cube(size=[matTh-0.1,20,40], center=true);
+        translate([-33,0,-(d/2)-d+8]) cube(size=[matTh-toothGap,20,40], center=true);
     }
-        translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
-        mirror([1,0,0]) translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],0.1,1);
+        translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],toothGap,1);
+        mirror([1,0,0]) translate([(h/2)-6,0,0]) translate([-3,-(matTh/2)+matTh,-matTh/2]) rotate([0,270,90])cToothMod([2*matTh,matTh,matTh],toothGap,1);
 
 
 }
